@@ -1,4 +1,6 @@
-#program that creates intents.json file based on given data
+# Copyright (C) 2023 by Nikodem "Med0kin" Kuliœ
+# This file is part of the Med0kin project, and is released under the "MIT License Agreement".
+# Please see the LICENSE file that should have been included as part of this package.
 
 import json
 
@@ -14,7 +16,7 @@ def import_json(file_name):
 
 def export_json(file_name):
     with open(file_name, 'w', encoding='utf-8') as f:
-        json.dump(intents, f3, indent=4, ensure_ascii=False)
+        json.dump(intents, f, indent=4, ensure_ascii=False)
 
 
 def add_tag(tag):
@@ -57,5 +59,3 @@ if __name__ == '__main__':
     # write to json file
     with open("intents.json", "w", encoding="utf-8") as f:
         json.dump(intents, f, indent=4, ensure_ascii=False)
-
-        

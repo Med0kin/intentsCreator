@@ -1,3 +1,7 @@
+# Copyright (C) 2023 by Nikodem "Med0kin" Kuliœ
+# This file is part of the Med0kin project, and is released under the "MIT License Agreement".
+# Please see the LICENSE file that should have been included as part of this package.
+
 import json
 import argparse
 
