@@ -2,11 +2,11 @@
 # This file is part of the Med0kin project, and is released under the "MIT License Agreement".
 # Please see the LICENSE file that should have been included as part of this package.
 
-import json
 import argparse
+import json
 
 
-def merge_intents(intents_file1, intents_file2, merged_file):
+def merge_intents(intents_file1:str, intents_file2:str, merged_file:str) -> None:
     # Load the intent data from the first JSON file
     with open(intents_file1, encoding='utf-8') as f1:
         intents1 = json.load(f1)
