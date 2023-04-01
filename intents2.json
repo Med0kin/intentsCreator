@@ -1,0 +1,29 @@
+{
+    "intents": [
+      {
+        "tag": "hello",
+        "patterns": ["Cześć", "Witaj", "Hej"],
+        "responses": ["Witaj, jak mogę Ci pomóc?", "Dzień dobry, co mogę dla Ciebie zrobić?"],
+        "context_set": ""
+      },
+      {
+        "tag": "goodbye",
+        "patterns": ["Do widzenia", "Do zobaczenia", "Papa"],
+        "responses": ["Do zobaczenia!", "Pozdrawiam!"],
+        "context_set": ""
+      },
+      {
+        "tag": "thanks",
+        "patterns": ["Dziękuję", "Serdecznie dziękuję", "Bardzo dziękuję", "Dzięki"],
+        "responses": ["Nie ma za co!", "Zawsze do Twojej dyspozycji!"],
+        "context_set": ""
+      },
+      {
+        "tag": "greetings",
+        "patterns": ["Jak się masz?", "Co u Ciebie?", "Jak leci?"],
+        "responses": ["Dobrze, dzięki! A u Ciebie?", "Wszystko w porządku, a u Ciebie?"],
+        "context_set": ""
+      }
+    ]
+  }
+  
