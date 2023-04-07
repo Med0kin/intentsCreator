@@ -1,6 +1,8 @@
 # Copyright (C) 2023 by Nikodem "Med0kin" Kuliœ
-# This file is part of the Med0kin project, and is released under the "MIT License Agreement".
-# Please see the LICENSE file that should have been included as part of this package.
+# This file is part of the intentsCreator project,
+# and is released under the "MIT License Agreement".
+# Please see the LICENSE file that should have been included
+# as part of this package.
 
 import json
 
@@ -11,27 +13,35 @@ def new_json() -> dict:
     }
     return intents
 
-def import_json(file_name:str) -> dict:
+
+def import_json(file_name: str) -> dict:
     with open(file_name, encoding='utf-8') as f:
         intents = json.load(f)
     existing_tags = [intent['tag'] for intent in intents['intents']]
     return intents
 
-def export_json(file_name:str, intents:dict) -> None:
+
+def export_json(file_name: str, intents: dict) -> None:
     with open(file_name, 'w', encoding='utf-8') as f:
         json.dump(intents, f, indent=4, ensure_ascii=False)
 
 
-def add_tag(intents:dict, tag:str) -> dict:
+def add_tag(intents: dict, tag: str) -> dict:
     existing_tags = [intent['tag'] for intent in intents['intents']]
     if tag not in existing_tags:
         existing_tags.append(tag)
         # append tag, pattern and response to intents
-        intents["intents"].append({"tag": tag, "patterns": [], "responses": [], "context_set": ""})
+        intents["intents"].append(
+            {"tag": tag,
+             "patterns": [],
+             "responses": [],
+             "context_set": ""}
+            )
         return intents
     return False
 
-def add_pattern(intents:dict, tag:str, pattern:str) -> dict:
+
+def add_pattern(intents: dict, tag: str, pattern: str) -> dict:
     add_tag(tag)
     # find the tag in intents
     for intent in intents["intents"]:
@@ -44,7 +54,8 @@ def add_pattern(intents:dict, tag:str, pattern:str) -> dict:
     print("Error executing add_pattern")
     return False
 
-def add_response(intents:dict, tag:str, response:str) -> dict:
+
+def add_response(intents: dict, tag: str, response: str) -> dict:
     add_tag(tag)
     # find the tag in intents
     for intent in intents["intents"]:
@@ -57,12 +68,12 @@ def add_response(intents:dict, tag:str, response:str) -> dict:
     print("Error executing add_response")
     return False
 
+
 if __name__ == '__main__':
     # create new json file
     intents = new_json()
-    intents = add_pattern(intents,"greeting", "hello there")
+    intents = add_pattern(intents, "greeting", "hello there")
     intents = add_pattern(intents, "greeting", "howdy")
-    
 
     # write to json file
     with open("intents.json", "w", encoding="utf-8") as f:
