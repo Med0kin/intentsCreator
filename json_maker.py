@@ -1,4 +1,4 @@
-# Copyright (C) 2023 by Nikodem "Med0kin" Kuliœ
+# Copyright (C) 2023 by Nikodem "Med0kin" KuliÅ›
 # This file is part of the intentsCreator project,
 # and is released under the "MIT License Agreement".
 # Please see the LICENSE file that should have been included
@@ -42,7 +42,7 @@ def add_tag(intents: dict, tag: str) -> dict:
 
 
 def add_pattern(intents: dict, tag: str, pattern: str) -> dict:
-    add_tag(tag)
+    add_tag(intents, tag)
     # find the tag in intents
     for intent in intents["intents"]:
         if intent["tag"] == tag:
@@ -56,7 +56,7 @@ def add_pattern(intents: dict, tag: str, pattern: str) -> dict:
 
 
 def add_response(intents: dict, tag: str, response: str) -> dict:
-    add_tag(tag)
+    add_tag(intents, tag)
     # find the tag in intents
     for intent in intents["intents"]:
         if intent["tag"] == tag:
