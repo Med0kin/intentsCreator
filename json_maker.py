@@ -50,9 +50,9 @@ def add_pattern(intents: dict, tag: str, pattern: str) -> dict:
             if pattern not in intent["patterns"]:
                 intent["patterns"].append(pattern)
                 return intents
-    # Error message
-    print("Error executing add_pattern")
-    return False
+    # return intents if pattern already exists
+    return intents
+
 
 
 def add_response(intents: dict, tag: str, response: str) -> dict:
@@ -64,17 +64,52 @@ def add_response(intents: dict, tag: str, response: str) -> dict:
             if response not in intent["responses"]:
                 intent["responses"].append(response)
                 return intents
-    # Error message
-    print("Error executing add_response")
-    return False
+    # return intents if pattern already exists
+    return intents
+
+
+def delete_tag(intents: dict, tag: str) -> dict:
+    # find the tag in intents
+    for intent in intents["intents"]:
+        if intent["tag"] == tag:
+            # delete tag
+            intents["intents"].remove(intent)
+            return intents
+    # return intents if tag not exists
+    return intents
+
+
+def delete_pattern(intents: dict, tag: str, pattern: str) -> dict:
+    # find the tag in intents
+    for intent in intents["intents"]:
+        if intent["tag"] == tag:
+            # delete pattern
+            intent["patterns"].remove(pattern)
+            return intents
+    # return intents if tag not exists
+    return intents
+
+
+def delete_response(intents: dict, tag: str, response: str) -> dict:
+    # find the tag in intents
+    for intent in intents["intents"]:
+        if intent["tag"] == tag:
+            # delete response
+            intent["responses"].remove(response)
+            return intents
+    # return intents if tag not exists
+    return intents
 
 
 if __name__ == '__main__':
     # create new json file
     intents = new_json()
+    intents = add_tag(intents, "greewting")
     intents = add_pattern(intents, "greeting", "hello there")
     intents = add_pattern(intents, "greeting", "howdy")
-
+    intents = add_response(intents, "greeting", "Hello, thanks for asking")
+    intents = add_response(intents, "greeting", "Hello, thanks for asking")
+    intents = delete_pattern(intents, "greeting", "howdy")
     # write to json file
     with open("intents.json", "w", encoding="utf-8") as f:
         json.dump(intents, f, indent=4, ensure_ascii=False)
