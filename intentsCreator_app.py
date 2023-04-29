@@ -22,6 +22,7 @@ class Window(QWidget):
         self.dictionary = jmaker.new_json()
 
         self.setup_UI()
+        self.setup_connections()
         self.show()
     
 
@@ -88,12 +89,13 @@ class Window(QWidget):
         self.bottom_layout.addWidget(self.load_button)
         self.clear_button = QPushButton("Clear")
         self.bottom_layout.addWidget(self.clear_button)
-        self.exit_button = QPushButton("Exit")
-        self.bottom_layout.addWidget(self.exit_button)
+        self.print_button = QPushButton("Print")
+        self.bottom_layout.addWidget(self.print_button)
 
 
+    def setup_connections(self):
         # Buttons connections
-        button_list = [self.save_button, self.load_button, self.clear_button, self.exit_button]
+        button_list = [self.save_button, self.load_button, self.clear_button, self.print_button]
         for button in button_list:
             button.clicked.connect(self.button_clicked)
 
@@ -102,22 +104,32 @@ class Window(QWidget):
         for list in lists_list:
             list.itemClicked.connect(self.list_clicked)
 
+        # List connections (double click)
+        lists_list = [self.tag_list, self.pattern_list, self.response_list]
+        for list in lists_list:
+            list.itemDoubleClicked.connect(self.list_double_clicked)
+
         # Line Edit connections
         line_edit_list = [self.tag_line_edit, self.pattern_line_edit, self.response_line_edit, self.filename_line_edit]
         for line_edit in line_edit_list:
             line_edit.returnPressed.connect(self.line_edit_return_pressed)
 
 
-    # if delete is pressed, delete selected item
+    # If delete is pressed, delete selected item
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Delete:
             if self.tag_list.hasFocus():
-                self.delete_tag()
-
-    def delete_tag(self):
-        tag = self.tag_list.currentItem().text()
-        self.tag_list.takeItem(self.tag_list.currentRow())
-        print(self.dictionary)
+                tag = self.tag_list.currentItem().text()
+                self.tag_list.takeItem(self.tag_list.currentRow())
+                self.dictionary = jmaker.delete_tag(self.dictionary, tag)
+            elif self.pattern_list.hasFocus():
+                pattern = self.pattern_list.currentItem().text()
+                self.pattern_list.takeItem(self.pattern_list.currentRow())
+                self.dictionary = jmaker.delete_pattern(self.dictionary, self.tag_line_edit.text(), pattern)
+            elif self.response_list.hasFocus():
+                response = self.response_list.currentItem().text()
+                self.response_list.takeItem(self.response_list.currentRow())
+                self.dictionary = jmaker.delete_response(self.dictionary, self.tag_line_edit.text(), response)
 
 
     # Button functions
@@ -125,7 +137,7 @@ class Window(QWidget):
         button = self.sender()
         if button.text() == "Save":
             if self.filename_line_edit.text().endswith(".json"):
-                jmaker.export_json(self.dictionary, self.filename_line_edit.text())
+                jmaker.export_json(self.filename_line_edit.text(), self.dictionary)
             else:
                 raise Exception("Wrong file extension")
 
@@ -134,6 +146,11 @@ class Window(QWidget):
                 self.dictionary = jmaker.import_json(self.filename_line_edit.text())
             else:
                 raise Exception("Wrong file extension")
+            self.tag_list.clear()
+            self.pattern_list.clear()
+            self.response_list.clear()
+            for tag in jmaker.get_tags(self.dictionary):
+                self.tag_list.addItem(tag)
 
         elif button.text() == "Clear":
             self.dictionary = jmaker.new_json()
@@ -141,8 +158,8 @@ class Window(QWidget):
             self.pattern_list.clear()
             self.response_list.clear()
 
-        elif button.text() == "Exit":
-            self.exit()
+        elif button.text() == "Print":
+            print(self.dictionary)
 
     # List functions
     def list_clicked(self):
@@ -154,23 +171,51 @@ class Window(QWidget):
         elif list == self.response_list:
             self.response_line_edit.setText(list.currentItem().text())
 
+    # List functions (double click)
+    def list_double_clicked(self):
+        list = self.sender()
+        if list == self.tag_list:
+            #get pattern and response list and display them
+            self.pattern_list.clear()
+            self.response_list.clear()
+            paterns = jmaker.get_patterns(self.dictionary, self.tag_line_edit.text())
+            responses = jmaker.get_responses(self.dictionary, self.tag_line_edit.text())
+            for pattern in paterns:
+                self.pattern_list.addItem(pattern)
+            for response in responses:
+                self.response_list.addItem(response)
+
     # Line Edit functions
     def line_edit_return_pressed(self):
         line_edit = self.sender()
         if line_edit == self.tag_line_edit:
+            if line_edit.text() == "":
+                raise Exception("Tag can't be blank")
             self.tag_list.addItem(line_edit.text())
             self.dictionary = jmaker.add_tag(self.dictionary, line_edit.text())
-            print("tag")
-        elif line_edit == self.pattern_line_edit:
-            self.pattern_list.addItem(line_edit.text())
-            self.dictionary = jmaker.add_pattern(self.dictionary, self.tag_line_edit.text(), line_edit.text())
-            print("pattern")
-        elif line_edit == self.response_line_edit:
-            self.response_list.addItem(line_edit.text())
-            print("response")
 
-#Main
-myapp = QApplication(sys.argv)
-window = Window()
-myapp.exec_()
-sys.exit()
+        elif line_edit == self.pattern_line_edit:
+            if self.tag_line_edit.text() in jmaker.get_tags(self.dictionary):
+                if line_edit.text() == "":
+                    raise Exception("Pattern can't be blank")
+                self.pattern_list.addItem(line_edit.text())
+                self.dictionary = jmaker.add_pattern(self.dictionary, self.tag_line_edit.text(), line_edit.text())
+            else:
+                raise Exception("Tag doesn't exist")
+            self.pattern_line_edit.clear()
+
+        elif line_edit == self.response_line_edit:
+            if self.tag_line_edit.text() in jmaker.get_tags(self.dictionary):
+                if line_edit.text() == "":
+                    raise Exception("Response can't be blank")
+                self.response_list.addItem(line_edit.text())
+                self.dictionary = jmaker.add_response(self.dictionary, self.tag_line_edit.text(), line_edit.text())
+            else:
+                raise Exception("Tag doesn't exist")
+            self.response_line_edit.clear()
+
+if __name__ == "__main__":
+    myapp = QApplication(sys.argv)
+    window = Window()
+    myapp.exec_()
+    sys.exit()

@@ -101,6 +101,25 @@ def delete_response(intents: dict, tag: str, response: str) -> dict:
     return intents
 
 
+def get_tags(intents: dict) -> list:
+    tags = []
+    for intent in intents["intents"]:
+        tags.append(intent["tag"])
+    return tags
+
+
+def get_patterns(intents: dict, tag: str) -> list:
+    for intent in intents["intents"]:
+        if intent["tag"] == tag:
+            return intent["patterns"]
+
+
+def get_responses(intents: dict, tag: str) -> list:
+    for intent in intents["intents"]:
+        if intent["tag"] == tag:
+            return intent["responses"]
+
+
 if __name__ == '__main__':
     # create new json file
     intents = new_json()
@@ -111,5 +130,4 @@ if __name__ == '__main__':
     intents = add_response(intents, "greeting", "Hello, thanks for asking")
     intents = delete_pattern(intents, "greeting", "howdy")
     # write to json file
-    with open("intents.json", "w", encoding="utf-8") as f:
-        json.dump(intents, f, indent=4, ensure_ascii=False)
+    export_json("intents.json", intents)
